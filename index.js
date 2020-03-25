@@ -1,15 +1,25 @@
-"use strict";
+const { ApolloServer, gql } = require("apollo-server");
 
-const createRouter = require("@arangodb/foxx/router");
-const router = createRouter();
+// The GraphQL schema
+const typeDefs = gql`
+  type Query {
+    "A simple type for getting started!"
+    hello: String
+  }
+`;
 
-module.context.use(router);
+// A map of functions which return data for the schema.
+const resolvers = {
+  Query: {
+    hello: () => "world"
+  }
+};
 
-// continued
-router
-  .get("/hello-world", function(req, res) {
-    res.send("Hello World!");
-  })
-  .response(["text/plain"], "A generic greeting.")
-  .summary("Generic greeting")
-  .description("Prints a generic greeting.");
+const server = new ApolloServer({
+  typeDefs,
+  resolvers
+});
+
+server.listen().then(({ url }) => {
+  console.log(`🚀 Server ready at ${url}`);
+});
